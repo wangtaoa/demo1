@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="main.css" />
+		<script src="jquery.min.js"></script>
+		<script src="cookie.js"></script>
+		<style>
+			.header{
+				height: 40px;
+				width: 900px;
+				margin: 0 auto 50px;
+			}
+		</style>
+	</head>
+	<body>		 
+		<div class="header">
+			<span id="s"><a href="login.html">登录 / 注册</a></span>
+			<span id="s1">
+				
+			</span>
+		</div>
+		<div class="nav clearfix">
+			<!--<span>小米手机</span>-->
+		</div>		
+		<ul class="shoplist clearfix">
+			<!--<li>
+				<a href="page.html">
+					<img src="img/1.jpg" alt="" />
+					<p>小米1</p>
+					<p>890</p>
+				</a>
+				<button>加入购物车</button>
+			</li>-->
+		</ul>	
+	</body>
+</html>
+<script type="text/javascript">
+	//页面加载   获取所有数据 
+	window.onload = function(){
+		$.ajax({
+			type:"get",
+			url:"data.json",
+			success : function(json){
+				var str = "";
+				for(var attr in json){
+					str += `<span>${json[attr].name}</span>`;
+					
+					var list = json[attr].list
+					for( var i=0 ; i<list.length ; i++ ){
+						var $li = $(`<li>
+										<a href="page.html?class=${attr}&pid=${list[i].id}">
+											<img src="img/${list[i].src}" alt="" />
+											<p>${list[i].name}</p>
+											<p>${list[i].price}</p>
+										</a>
+										<button data-id="${list[i].id}" data-name="${list[i].name}" data-src="${list[i].src}" data-price="${list[i].price}">加入购物车</button>
+									</li>`);
+						$li.appendTo(".shoplist");
+					}
+				}
+				$(".nav").html( str );
+				$(".nav").on("click","span",function(){
+					$(".shoplist").empty();
+					$name = $(this).text()
+					for( var attr in json ){
+						if( json[attr].name == $name ){
+							var phone = json[attr].list;
+							for( var i=0 ; i<phone.length ; i++ ){
+								var $li1 = $(`<li>
+												<a href="page.html?class=${attr}&pid=${phone[i].id}">
+													<img src="img/${phone[i].src}" alt="" />
+													<p>${phone[i].name}</p>
+													<p>${phone[i].price}</p>
+												</a>
+												<button data-id="${phone[i].id}" data.name=${phone[i].name} data-src="${phone[i].src}" data-price="${phone[i].price}">加入购物车</button>
+											</li>`);
+								$li1.appendTo(".shoplist");
+							}
+							
+						}
+					}
+				})//nav click 事件添加结束
+				$(".shoplist").on("click","button",function(){
+					var arr = [];//数组内容是[{},{},{},{}...]
+					var flag=true; //flag为真的时候 向arr中push 当前的json;
+					var json={
+						id : $(this).data("id"),
+						name : $(this).data("name"),
+						src : $(this).data("src"),
+						price : $(this).data("price"),
+						count : 1
+					}
+					var oldcookie = getCookie("shopinfo");
+					if( oldcookie.length != 0 ){
+						arr = oldcookie;
+						for( var i=0 ; i<arr.length ; i++ ){
+							if( json.id == arr[i].id && json.name == arr[i].name ){
+								arr[i].count++;
+								flag=false;
+								break;
+							}
+						}
+					}
+					 if( flag ){
+					 	arr.push( json );
+					 }
+					setCookie("shopinfo",JSON.stringify(arr));
+					if( !confirm("点击确定,继续购物;点击取消,去购物车结账") ){
+						location.href="shopcar.html";
+					}
+				})
+			}
+		});
+	}
+	
+</script>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="jquery.min.js"></script>
+		
+		<style>
+			#shopbtn{
+				font-size: 30px;
+				padding: 5px 10px;
+				border: 1px solid red;
+				margin-bottom: 20px;
+				cursor: pointer;
+			}
+			p,button{
+				margin-left:80px;
+			}
+			img{
+				margin-left:40px ;
+			} 
+		</style>
+		<script src="cookie.js"></script>
+	</head>
+	<body>
+		
+		<div class="shopinfo">
+			<!--<img src="img/1.jpg" alt="" />
+			<p>小米1</p>
+			<p>333</p>
+			<button>购买</button>-->
+		</div>
+		
+			
+	</body>
+</html>
+<script type="text/javascript">
+ 	 // alert( location.href )    http://127.0.0.1/shopCart1725/page.html?class=classify001&pid=shop01
+ 	 var url = location.href;
+ 	 var str = url.split("?")[1];
+ 	 var cla = str.split("&")[0].split("=")[1];
+ 	 var pid = str.split("&")[1].split("=")[1];//得到点击的 手机在json中对应的 类名 和 产品id
+ 	 //console.log( cla,pid )
+ 	 $.ajax({
+ 	 	type : "get",
+ 	 	url : "data.json",
+ 	 	success : function(json){
+ 	 		for( var i=0 ; i<json[cla].list.length ; i++ ){
+ 	 			var pro = json[cla].list[i];
+ 	 			if( pro.id == pid ){console.log( json[cla].list[i] )
+ 	 					$(".shopinfo").html(`<img src="img/${pro.src}" alt="" />
+											<p>${pro.name}</p>
+											<p>${pro.price}</p>
+											<button>购买</button>`)
+ 	 			}
+ 	 		}
+ 	 	}
+ 	 })
+</script>
